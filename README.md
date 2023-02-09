@@ -68,6 +68,10 @@ In `[bot-args]` you should provide the following options
 
 `/cmd queue -v PIPELINE_SCRIPTS_REF=your-branch -c bench $ overhead assets westmint`
 
+## Runs all benchmarks for all pallets, for a given runtime
+
+`/cmd queue -c bench-bot $ spiritnet`
+
 ## Cancel <a name="pull-request-command-cancel"></a>
 
 In the pull request where you previously ran `/cmd queue`, comment:
