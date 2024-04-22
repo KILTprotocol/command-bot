@@ -1,6 +1,8 @@
 # Introduction
 
-command-bot provides interfaces for executing arbitrary commands on GitLab CI.
+command-bot provides interfaces for executing pre-defined commands on GitLab CI.
+
+[![GitHub Issue Sync](https://github.com/paritytech/command-bot/actions/workflows/github-issue-sync.yml/badge.svg)](https://github.com/paritytech/command-bot/actions/workflows/github-issue-sync.yml)
 
 Before starting to work on this project, we recommend reading the
 [Implementation section](#implementation).
@@ -9,10 +11,9 @@ Before starting to work on this project, we recommend reading the
 
 - [How it works](#how-it-works)
 - [Pull request commands](#pull-request-commands)
-  - [Queue](#pull-request-command-queue)
+  - [Help](#pull-request-command-help)
   - [Cancel](#pull-request-command-cancel)
 - [API](#api)
-  - [Create a Personal Token](#api-create-token)
   - [Queue](#api-command-queue)
   - [Cancel](#api-command-cancel)
 - [GitHub App](#github-app)
@@ -41,20 +42,9 @@ command-bot executes arbitrary commands on GitLab CI from
 
 Comment in a pull request:
 
-`/cmd queue [bot-args] $ [args]`
+`bot [command] [bot-args] $ [args]`
 
-In `[bot-args]` you should provide the following options
-
-- `-c` / `--configuration`: select one of the following configurations
-
-  - `bench-bot`: runs
-    [`bench-bot`](https://github.com/paritytech/pipeline-scripts/blob/master/bench-bot.sh)
-    `[args]`
-  - `try-runtime`: runs
-    `cargo run --release --quiet --features=try-runtime try-runtime [args]`. Note
-    that you can use
-    [the dedicated internal RPC nodes](https://github.com/paritytech/devops/wiki/Internal-RPC-nodes)
-    in the arguments of this command.
+In `[bot-args]` are optional, you can provide the following options
 
 - `-v` / `--var` (optional): defines environment variables for the CI job which
   runs the command. You can specify this option multiple times for multiple
@@ -62,11 +52,11 @@ In `[bot-args]` you should provide the following options
 
 ### Example
 
-`/cmd queue -v RUST_LOG=debug -c bench $ runtime westend-dev pallet_balances`
+## Help <a name="pull-request-command-help"></a>
 
-#### Testing the updates to pipeline-scripts by overriding its default branch
+`bot help`
 
-`/cmd queue -v PIPELINE_SCRIPTS_REF=your-branch -c bench $ overhead assets westmint`
+Bot responds with an actual list of commands generated from pipeline.
 
 ## Runs all benchmarks for all pallets, for a given runtime
 
@@ -74,38 +64,18 @@ In `[bot-args]` you should provide the following options
 
 ## Cancel <a name="pull-request-command-cancel"></a>
 
-In the pull request where you previously ran `/cmd queue`, comment:
+In the pull request where you previously ran `bot queue`, comment:
 
-`/cmd cancel`
+`bot cancel`
 
 # API <a name="api"></a>
 
 The API provides an alternative interface for executing commands directly
 without having to go through pull request comments.
 
-## Create a Personal Token <a name="api-create-token"></a>
-
-For interacting with the commands, first a Personal Token needs to be generated
-through `POST /api/access` by the
-[`$MASTER_TOKEN`](#setup-environment-variables) (it is currently owned
-by the OpsTooling team of Parity for Parity's deployments).
-
-Each Personal Token is tied to a Matrix Room ID where the command's outcome will
-be posted to after it finishes.
-
-```sh
-curl \
-  -H "X-Auth: $MASTER_TOKEN" \
-  -H "Content-Type: application/json" \
-  -X POST http://command-bot/access \
-  -d '{
-    "matrixRoom": "!tZrvvMzoIkIYbCkLuk:matrix.foo.io",
-  }'
-```
-
 ## Queue <a name="api-command-queue"></a>
 
-Use a [Personal Token](#api-create-token) for queueing a command through `POST /api/queue`.
+Use a Master Token for queueing a command through `POST /api/queue`.
 
 ```sh
 curl \
@@ -242,7 +212,7 @@ once the application starts.
 
    The `sample` configuration is available for debugging purposes.
 
-   `/cmd queue -c sample $ hi` will run `echo hi` in a GitLab job (GitLab
+   `bot sample $ hi` will run `echo hi` in a GitLab job (GitLab
    repository from Step 4).
 
 # Deployment <a name="deployment"></a>
@@ -298,5 +268,4 @@ TODO: Update this to reflect command-bot refactor.
 from the
 [command's execution](https://github.com/paritytech/try-runtime-bot/blob/68bffe556bc0fe91425dda31a542ba8fee71711d/src/executor.ts#L94) and
 [post it as a pull request comment](https://github.com/paritytech/try-runtime-bot/blob/68bffe556bc0fe91425dda31a542ba8fee71711d/src/github.ts#L151)
-if it originated from a pull request comment or
-[send it to a Matrix room](https://github.com/paritytech/try-runtime-bot/blob/412e82d728798db0505f6f9dd622805a4ca43829/src/utils.ts#L187) if it originated from an API request.
+if it originated from a pull request comment or send it to server logs if it originated from an API request.

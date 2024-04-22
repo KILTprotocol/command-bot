@@ -62,7 +62,7 @@ process.env.GITLAB_ACCESS_TOKEN_USERNAME ??= "placeholder"
   pipelines with ref $PIPELINE_SCRIPTS_REF. Leave it unset to disable
   $PIPELINE_SCRIPTS.
 */
-process.env.PIPELINE_SCRIPTS_REPOSITORY ??= "https://github.com/paritytech/command-bot-scripts.git"
+process.env.PIPELINE_SCRIPTS_REPOSITORY ??= "https://github.com/paritytech/command-bot-scripts/"
 process.env.PIPELINE_SCRIPTS_REF ??= "main"
 
 /*
@@ -94,15 +94,6 @@ process.env.MASTER_TOKEN ??= "placeholder"
 
 /*
   NOT REQUIRED
-  The API interactions needs a Matrix-related variables to be configured for
-  notifying when a command finishes. Additionally, MASTER_TOKEN is used for
-  allowing tokens to the API. If those are missing, then the API will not work.
-*/
-// process.env.MATRIX_HOMESERVER ??= "https://matrix.parity.io"
-// process.env.MATRIX_ACCESS_TOKEN ??= "placeholder"
-
-/*
-  NOT REQUIRED
   - For production it's recommended to set LOG_FORMAT to "json" so that log
   entries it can be queried easily.
   - For development it's recommended to leave this variable empty because the
@@ -124,3 +115,14 @@ process.env.MASTER_TOKEN ??= "placeholder"
   to the smee.io URL in https://github.com/settings/apps/[app-name].
 */
 // process.env.WEBHOOK_PROXY_URL ??= "https://smee.io/fc8OfV07M1O69fm5"
+
+/*
+  Used to generate help page, which leads to cmd bot server
+*/
+process.env.CMD_BOT_URL ??= "http://localhost:3000/"
+
+process.env.MIN_LOG_LEVEL ??= "debug"
+
+process.env.BOT_PR_COMMENT_MENTION ??= "localbot"
+
+process.env.PROCESSBOT_SUPPORTED_REPOS ??= "substrate,polkadot,cumulus"

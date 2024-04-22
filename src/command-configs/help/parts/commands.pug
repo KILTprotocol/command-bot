@@ -1,0 +1,61 @@
+each cfg, commandName in commandConfigs
+  div.command
+    h4(id="link-" + commandName) #{ commandName }
+    p.mb-lg #{ cfg.command.description }
+
+    if cfg.command.presets
+      each preset, presetId in cfg.command.presets
+        include commands_preset.pug
+
+    else
+      p Example:&nbsp;
+        code
+          | #{commandStart} #{commandName}
+
+div(id="link-companion").command
+  h5 Patch Companion
+
+  p Syntax (after command name):
+  p
+    code -v PATCH_repo=pull_request_id
+
+  p Examples:
+  p
+    code #{commandStart} bench -v PATCH_substrate=11341 polkadot-overhead --network=westend-dev
+  p
+    code #{commandStart} try-runtime -v PATCH_polkadot=3341 polkadot --network=westend
+
+div(id="link-new-command").command
+  h5 Test new command.
+  p When you create/modify a command in #{repoLink} repo, you can test it before merging to master
+
+  p Syntax (after command name):
+  p
+    code -v PIPELINE_SCRIPTS_REF=your_branch
+
+  p Examples:
+  p
+    code #{commandStart} new-command -v PIPELINE_SCRIPTS_REF=mak/new-command new-id --new-arg=value
+
+div(id="link-override-ci-image").command
+  h5 Override Command's CI Image
+  p You can override command's CI image with any other image, for example when you need to test new version of Rust
+
+  p Syntax (after command name):
+  p
+    code -v CMD_IMAGE=paritytech/ci-unified:bullseye-1.77.0-2024-04-10-v20240408
+
+  p Examples:
+  p
+    code #{commandStart} update-ui -v CMD_IMAGE=paritytech/ci-unified:bullseye-1.77.0-2024-04-10-v20240408 --rust_version=1.77.0
+
+div(id="link-rust").command
+  h5 Rust Log, etc
+  p You can define custom env variables like for RUST env
+  p Syntax (after command name):
+  p
+    code -v RUST_LOG=remote-ext=debug,runtime=trace
+
+  p Examples:
+  p
+    code #{commandStart} try-runtime -v RUST_LOG=remote-ext=debug,runtime=trace polkadot --network=westend

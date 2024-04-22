@@ -1,5 +1,5 @@
-import { Task } from "src/task"
-import { PipelineScripts } from "src/types"
+import { Task } from "src/task";
+import { PipelineScripts } from "src/types";
 
 export function createCiConfig(
   headSha: string,
@@ -7,12 +7,12 @@ export function createCiConfig(
   pipelineScripts: PipelineScripts,
   jobTaskInfoMessage: string,
 ): object {
-  const artifactsFolderPath = ".git/.artifacts"
+  const artifactsFolderPath = ".git/.artifacts";
   return {
     workflow: { rules: [{ if: `$CI_PIPELINE_SOURCE == "api"` }, { if: `$CI_PIPELINE_SOURCE == "web"` }] },
     command: {
       timeout: "24 hours",
-      ...task.gitlab.job,
+      ...task.gitlab.job, // timeout could be overridden from the command configs
       script: [
         ...`
         echo "This job is related to task ${task.id}. ${jobTaskInfoMessage}."
@@ -59,5 +59,5 @@ export function createCiConfig(
         PIPELINE_SCRIPTS_DIR: ".git/.scripts",
       },
     },
-  }
+  };
 }
